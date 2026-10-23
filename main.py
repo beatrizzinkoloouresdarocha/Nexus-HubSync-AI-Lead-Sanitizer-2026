@@ -1,16 +1,15 @@
-from datetime import datetime
 import logging
 import os
+from datetime import datetime
 
+import requests
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException
 from google import genai
 from pydantic import BaseModel, EmailStr
-import requests
-from sqlalchemy import Column, DateTime, Integer, String, Text, create_engine
+from sqlalchemy import DateTime, Integer, String, Text, create_engine
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
 load_dotenv()
 
@@ -20,15 +19,19 @@ logger = logging.getLogger(__name__)
 DATABASE_URL = "sqlite:///./nexus_leads.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+
+
+class Base(DeclarativeBase):
+    pass
 
 
 class AuditLogModel(Base):
     __tablename__ = "audit_logs"
-    id = Column(Integer, primary_key=True, index=True)
-    raw_payload = Column(Text, nullable=False)
-    error_message = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    raw_payload: Mapped[str] = mapped_column(Text, nullable=False)
+    error_message: Mapped[str | None] = mapped_column(String, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
 Base.metadata.create_all(bind=engine)
