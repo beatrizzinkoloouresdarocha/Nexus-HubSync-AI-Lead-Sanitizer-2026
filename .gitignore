@@ -1,6 +1,21 @@
-﻿venv/
+﻿# Ambientes virtuais
+venv/
 .venv/
+ENV/
+env/
+
+# Cache do Python
 __pycache__/
-*.db
+*.py[cod]
+*.class
+
+# Arquivos de configuração e chaves secretas
 .env
+
+# Banco de dados local SQLite
+*.db
+*.sqlite3
+
+# Arquivos de sistema operacional
 .DS_Store
+Thumbs.db
